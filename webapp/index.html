@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KIREEFF</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+
+        <h1>KIREEFF</h1>
+
+        <p>Доставка по Бийску</p>
+
+    </div>
+
+</header>
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-text">
+
+        <h2>Настоящие продукты собственного производства</h2>
+
+        <p>
+            Небольшие партии. Натуральный состав.
+            Доставка по Бийску.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="catalog">
+
+    <h3>Каталог</h3>
+
+    <div class="products" id="products">
+
+</div>
+
+</section>
+
+</main>
+
+<div class="cart-button" id="cartButton">
+
+🛒 Корзина (<span id="cartCount">0</span>)
+
+</div>
+
+<div class="cart-panel" id="cartPanel">
+
+    <div class="cart-header">
+
+        <h3>Корзина</h3>
+
+        <button id="closeCart">✕</button>
+
+    </div>
+
+    <div id="cartItems">
+
+        <p>Корзина пуста</p>
+
+    </div>
+
+    <div class="cart-footer">
+
+        <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
+
+        <button id="checkoutButton">
+            Оформить заказ
+        </button>
+
+    </div>
+
+</div>
+
+<div class="modal" id="orderModal">
+
+    <div class="modal-content">
+
+        <h2>Оформление заказа</h2>
+
+        <input type="text" id="customerName" placeholder="Ваше имя">
+
+        <input type="tel" id="customerPhone" placeholder="Телефон">
+
+        <input type="text" id="customerAddress" placeholder="Адрес доставки">
+
+        <textarea id="customerComment" placeholder="Комментарий"></textarea>
+
+        <button id="sendOrder">
+            Подтвердить заказ
+        </button>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
