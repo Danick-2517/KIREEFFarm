@@ -1,119 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>KIREEFF</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIREEFF</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header class="header">
+    <header class="header">
+        <div class="brand">
+            <h1>KIREEFF</h1>
+            <p>Доставка по Бийску</p>
+        </div>
+    </header>
 
-    <div class="brand">
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h2>Настоящие продукты собственного производства</h2>
+                <p>
+                    Небольшие партии.
+                    Натуральный состав.
+                    Доставка по Бийску.
+                </p>
+            </div>
+        </section>
 
-        <h1>KIREEFF</h1>
+        <section class="catalog">
+            <h3>Каталог</h3>
+            <div class="products" id="products"></div>
+        </section>
+    </main>
 
-        <p>Доставка по Бийску</p>
-
+    <div class="cart-button" id="cartButton">
+        🛒 Корзина (<span id="cartCount">0</span>)
     </div>
 
-</header>
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="cart-header">
+                <h3>Корзина</h3>
+                <button id="closeCart">✕</button>
+            </div>
 
-<main>
+            <div id="cartItems"></div>
 
-<section class="hero">
-
-    <div class="hero-text">
-
-        <h2>Настоящие продукты собственного производства</h2>
-
-        <p>
-            Небольшие партии. Натуральный состав.
-            Доставка по Бийску.
-        </p>
-
+            <div class="cart-footer">
+                <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
+                <button id="checkoutButton">Оформить заказ</button>
+            </div>
+        </div>
     </div>
 
-</section>
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <h2>Оформление заказа</h2>
 
-<section class="catalog">
+            <input type="text" id="customerName" placeholder="Ваше имя">
+            <input type="tel" id="customerPhone" placeholder="+7 (___) ___-__-__">
+            <input type="text" id="customerAddress" placeholder="Адрес доставки">
+            <textarea id="customerComment" placeholder="Комментарий"></textarea>
 
-    <h3>Каталог</h3>
+            <select id="deliveryDate">
+                <option value="">Выберите дату</option>
+            </select>
 
-    <div class="products" id="products">
+            <select id="deliveryTimeSlot">
+                <option value="">Выберите время</option>
+                <option>11:00–15:00</option>
+                <option>15:00–19:00</option>
+                <option>19:00–23:00</option>
+            </select>
 
-</div>
-
-</section>
-
-</main>
-
-<div class="cart-button" id="cartButton">
-
-🛒 Корзина (<span id="cartCount">0</span>)
-
-</div>
-
-<div class="cart-panel" id="cartPanel">
-
-    <div class="cart-header">
-
-        <h3>Корзина</h3>
-
-        <button id="closeCart">✕</button>
-
+            <button id="sendOrder">Подтвердить заказ</button>
+        </div>
     </div>
 
-    <div id="cartItems">
+    <div id="toast"></div>
 
-        <p>Корзина пуста</p>
-
-    </div>
-
-    <div class="cart-footer">
-
-        <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
-
-        <button id="checkoutButton">
-            Оформить заказ
-        </button>
-
-    </div>
-
-</div>
-
-<div class="modal" id="orderModal">
-
-    <div class="modal-content">
-
-        <h2>Оформление заказа</h2>
-
-        <input type="text" id="customerName" placeholder="Ваше имя">
-
-        <input type="tel" id="customerPhone" placeholder="Телефон">
-
-        <input type="text" id="customerAddress" placeholder="Адрес доставки">
-
-        <textarea id="customerComment" placeholder="Комментарий"></textarea>
-
-        <button id="sendOrder">
-            Подтвердить заказ
-        </button>
-
-    </div>
-
-</div>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
-
 </html>

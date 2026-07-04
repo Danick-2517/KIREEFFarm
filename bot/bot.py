@@ -1,43 +1,101 @@
-#BOT_TOKEN = "8862554581:AAEfcuRi14Lzs4KIfmMjrAzpwoXG81VMUoM"
-#CHAT_ID = 6684691811
-from flask import Flask, request
+import os
+import logging
+from pathlib import Path
+
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import requests
+
+ENV_PATH = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("kireeff-bot")
 
 app = Flask(__name__)
 CORS(app)
 
-BOT_TOKEN = "8862554581:AAEfcuRi14Lzs4KIfmMjrAzpwoXG81VMUoM"
-CHAT_ID = 6684691811
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
+CHAT_ID = os.environ.get("CHAT_ID")
 
-def send(text):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": text})
+if not BOT_TOKEN or not CHAT_ID:
+    if not ENV_PATH.exists():
+        raise RuntimeError(
+            f"Файл .env не найден по пути: {ENV_PATH}\n"
+            f"Создай его: cp .env.example .env (внутри папки bot/)"
+        )
+    raise RuntimeError(
+        f"Файл .env найден ({ENV_PATH}), но BOT_TOKEN или CHAT_ID пустые.\n"
+        f"Проверь формат — без кавычек и без пробелов вокруг '=':\n"
+        f"BOT_TOKEN=твой_токен\n"
+        f"CHAT_ID=твой_chat_id"
+    )
+
+TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+
+
+def send_telegram_message(text):
+    try:
+        response = requests.post(
+            TELEGRAM_API_URL,
+            json={"chat_id": CHAT_ID, "text": text},
+            timeout=10
+        )
+        response.raise_for_status()
+        return True
+    except requests.RequestException as e:
+        logger.error("Telegram send failed: %s", e)
+        return False
+
+
+def format_order_message(customer, items, total):
+    text = "🧾 НОВЫЙ ЗАКАЗ\n\n"
+
+    for item in items:
+        text += (
+            f"🥩 {item['name']}\n"
+            f"Количество: {item['quantity']}\n"
+            f"Цена: {item['price']} ₽\n"
+            f"Сумма: {item['price'] * item['quantity']} ₽\n\n"
+        )
+
+    text += (
+        "──────────────\n"
+        f"💰 Итого: {total} ₽\n\n"
+        f"👤 {customer['name']}\n"
+        f"📞 {customer['phone']}\n"
+        f"📍 {customer['address']}\n"
+        f"🕒 {customer['slot']}\n"
+        f"💬 {customer.get('comment') or '-'}"
+    )
+
+    return text
+
 
 @app.route("/order", methods=["POST"])
 def order():
-    data = request.json
+    data = request.get_json(silent=True)
 
-    text = f"""
-🧾 НОВЫЙ ЗАКАЗ
+    if not data:
+        return jsonify({"success": False, "error": "invalid_json"}), 400
 
-👤 {data.get('name')}
-📞 {data.get('phone')}
-📍 {data.get('address')}
-⏰ Окно: {data.get('slot')}
+    customer = data.get("customer")
+    items = data.get("items")
+    total = data.get("total")
 
-────────────
+    if not customer or not items or total is None:
+        return jsonify({"success": False, "error": "missing_fields"}), 400
 
-"""
+    required_customer_fields = ("name", "phone", "address", "slot")
+    if not all(customer.get(field) for field in required_customer_fields):
+        return jsonify({"success": False, "error": "missing_customer_fields"}), 400
 
-    for item in data.get("items", []):
-        text += f"{item['name']} ×{item['qty']} = {item['price'] * item['qty']} ₽\n"
+    text = format_order_message(customer, items, total)
+    sent = send_telegram_message(text)
 
-    text += f"\n💰 ИТОГО: {data.get('total')} ₽"
+    return jsonify({"success": sent})
 
-    send(text)
-
-    return {"ok": True}
 
 if __name__ == "__main__":
     app.run(port=5000)
