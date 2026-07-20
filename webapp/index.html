@@ -4,58 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KIREEFF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="header">
-        <div class="brand">
-            <h1>KIREEFF</h1>
-            <p>Доставка по Бийску</p>
+    <section class="hero">
+        <img class="hero-bg" src="images/backgrounds/hero.jpg" alt="KIREEFF">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-nav">
+            <div class="brand">
+                <span class="brand-icon">
+                    <img src="images/logo/crest.png" alt="KIREEFF">
+                </span>
+                <div>
+                    <h1>KIREEFF</h1>
+                    <p><span class="rule"></span>Premium<span class="rule"></span></p>
+                </div>
+            </div>
+
+            <div class="hero-nav-right">
+                <nav class="nav">
+                    <a href="#catalog">Каталог</a>
+                    <a href="#about">О нас</a>
+                    <a href="#delivery">Доставка и оплата</a>
+                    <a href="#contacts">Контакты</a>
+                </nav>
+
+                <button class="header-cart" id="cartButton">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 12H7L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+                </button>
+            </div>
         </div>
-    </header>
+
+        <div class="hero-text">
+            <h2>Настоящие продукты<br>собственного производства</h2>
+            <p>Небольшие партии. Натуральный состав. Доставка по Бийску.</p>
+           <a href="#catalog" class="hero-button">Смотреть каталог <span>→</span></a>
+        </div>
+    </section>
 
     <main>
-        <section class="hero">
-            <div class="hero-text">
-                <h2>Настоящие продукты собственного производства</h2>
-                <p>
-                    Небольшие партии.
-                    Натуральный состав.
-                    Доставка по Бийску.
-                </p>
-            </div>
+        <section class="catalog" id="catalog">
+            <h3>Каталог продуктов</h3>
+            <div class="products" id="products"></div>
         </section>
 
-        <section class="catalog">
-            <h3>Каталог</h3>
-            <div class="products" id="products"></div>
+        <section class="info-block" id="about">
+            <h3>О нас</h3>
+            <p>
+                KIREEFF — небольшое семейное хозяйство в Бийске.
+                Мы сами выращиваем и готовим продукцию: без крупных партий,
+                без лишней химии, вручную и в срок.
+            </p>
+        </section>
+
+        <section class="info-block" id="delivery">
+            <h3>Доставка и оплата</h3>
+            <p>
+                Доставка только по Бийску, по выходным, в удобное вам окно.
+                Оплата наличными или переводом курьеру при получении.
+            </p>
+        </section>
+
+        <section class="info-block" id="contacts">
+            <h3>Контакты</h3>
+            <p>
+                Заказ оформляется через сайт — нажмите «Оформить заказ» в корзине.
+                По остальным вопросам пишите в Telegram.
+            </p>
         </section>
     </main>
 
-    <div class="cart-button" id="cartButton">
-        🛒 Корзина (<span id="cartCount">0</span>)
-    </div>
-
-    <div class="modal" id="cartModal">
-        <div class="modal-content">
-            <div class="cart-header">
-                <h3>Корзина</h3>
-                <button id="closeCart">✕</button>
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="brand">
+                <span class="brand-icon">🌿</span>
+                <div>
+                    <h1>KIREEFF</h1>
+                    <p>Фермерская продукция</p>
+                </div>
             </div>
+            <nav class="footer-nav">
+                <a href="#catalog">Каталог</a>
+                <a href="#about">О нас</a>
+                <a href="#delivery">Доставка и оплата</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
+        </div>
+    </footer>
 
-            <div id="cartItems"></div>
+    <div class="cart-overlay" id="cartOverlay"></div>
 
-            <div class="cart-footer">
-                <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
-                <button id="checkoutButton">Оформить заказ</button>
-            </div>
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3>Корзина</h3>
+            <button id="closeCart">✕</button>
+        </div>
+
+        <div id="cartItems"></div>
+
+        <div class="cart-footer">
+            <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
+            <button id="checkoutButton">Оформить заказ</button>
         </div>
     </div>
 
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <h2>Оформление заказа</h2>
+
+            <div class="order-summary" id="orderSummary"></div>
 
             <input type="text" id="customerName" placeholder="Ваше имя">
             <input type="tel" id="customerPhone" placeholder="+7 (___) ___-__-__">
@@ -66,14 +128,22 @@
                 <option value="">Выберите дату</option>
             </select>
 
-            <select id="deliveryTimeSlot">
-                <option value="">Выберите время</option>
-                <option>11:00–15:00</option>
-                <option>15:00–19:00</option>
-                <option>19:00–23:00</option>
-            </select>
+            <div class="time-slots" id="timeSlots">
+                <button type="button" data-time="11:00–15:00">11:00–15:00</button>
+                <button type="button" data-time="15:00–19:00">15:00–19:00</button>
+                <button type="button" data-time="19:00–23:00">19:00–23:00</button>
+            </div>
 
             <button id="sendOrder">Подтвердить заказ</button>
+        </div>
+    </div>
+
+    <div class="modal" id="photoModal">
+        <div class="photo-modal-content">
+            <button class="photo-close" id="closePhoto">✕</button>
+            <button class="photo-nav photo-prev" id="prevPhoto">‹</button>
+            <img id="photoModalImage" src="" alt="">
+            <button class="photo-nav photo-next" id="nextPhoto">›</button>
         </div>
     </div>
 

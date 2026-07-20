@@ -8,42 +8,62 @@ const MONTHS = ["января","февраля","марта","апреля","м�
 const WEEKDAYS = ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
 
 const products = [
-    { id: 1, name: "Домашняя колбаса", weight: "2 кг", price: 450, image: "images/products/placeholder.jpg" },
-    { id: 2, name: "Сало домашнее", weight: "1 кг", price: 650, image: "images/products/placeholder.jpg" },
-    { id: 3, name: "Копчёная грудинка", weight: "1 кг", price: 720, image: "images/products/placeholder.jpg" },
-    { id: 4, name: "Домашние сосиски", weight: "1 кг", price: 580, image: "images/products/placeholder.jpg" },
-    { id: 5, name: "Пельмени", weight: "1 кг", price: 430, image: "images/products/placeholder.jpg" },
-    { id: 6, name: "Фарш", weight: "1 кг", price: 390, image: "images/products/placeholder.jpg" },
-    { id: 7, name: "Тушёнка", weight: "500 г", price: 320, image: "images/products/placeholder.jpg" },
-    { id: 8, name: "Домашние яйца", weight: "10 шт", price: 180, image: "images/products/placeholder.jpg" }
+    { id: 1, name: "Колбаса Kireeff", weight: "1 кг", price: 450, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"], badge: "ХИТ" },
+    { id: 2, name: "Козье молоко", weight: "1 л", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 3, name: "Коровье молоко", weight: "1 л", price: 150, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 5, name: "Сыр", weight: "500 г", price: 400, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 6, name: "Яйца домашние", weight: "10 шт", price: 180, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 7, name: "Сало солёное", weight: "1 кг", price: 500, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 8, name: "Сало копчёное", weight: "1 кг", price: 550, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 9, name: "Сало Kireeff Фирменное", weight: "1 кг", price: 650, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"], badge: "ХИТ" },
+    { id: 10, name: "Малосольные огурцы", weight: "700 г", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"], badge: "ХИТ"},
+    { id: 11, name: "Ягодный компот", weight: "1 л", price: 300, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 12, name: "Фруктовый компот", weight: "1 л", price: 280, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 13, name: "Масло сливочное", weight: "200 г", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 14, name: "Творог", weight: "500 г", price: 320, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 15, name: "Варенье", weight: "500 г", price: 350, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 16, name: "Мёд", weight: "1 кг", price: 700, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 17, name: "Квашеная капуста", weight: "1 кг", price: 220, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 18, name: "Маринованные грибы", weight: "500 г", price: 300, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 19, name: "Грибы", weight: "по сезону", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 20, name: "Ягоды", weight: "по сезону", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
+    { id: 21, name: "Фрукты", weight: "по сезону", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
 ];
 
 let cart = JSON.parse(localStorage.getItem("cart")) || {};
+let selectedTime = "";
 
 const productsContainer = document.getElementById("products");
 const cartButton = document.getElementById("cartButton");
-const cartModal = document.getElementById("cartModal");
+const cartPanel = document.getElementById("cartPanel");
+const cartOverlay = document.getElementById("cartOverlay");
 const closeCartButton = document.getElementById("closeCart");
 const cartItemsEl = document.getElementById("cartItems");
 const cartCountEl = document.getElementById("cartCount");
 const cartTotalEl = document.getElementById("cartTotal");
 const checkoutButton = document.getElementById("checkoutButton");
 const orderModal = document.getElementById("orderModal");
+const orderSummaryEl = document.getElementById("orderSummary");
 const sendOrderButton = document.getElementById("sendOrder");
 const toastEl = document.getElementById("toast");
+const timeSlotsEl = document.getElementById("timeSlots");
 
 const nameInput = document.getElementById("customerName");
 const phoneInput = document.getElementById("customerPhone");
 const addressInput = document.getElementById("customerAddress");
 const commentInput = document.getElementById("customerComment");
 const dateSelect = document.getElementById("deliveryDate");
-const timeSelect = document.getElementById("deliveryTimeSlot");
+
+/* ========================= */
+/*          PRODUCTS           */
+/* ========================= */
 
 function renderProducts() {
     productsContainer.innerHTML = products.map(product => `
         <div class="product-card">
-            <div class="product-image">
-                <img src="${product.image}" alt="${product.name}">
+            ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ""}
+            <div class="product-image" onclick="openPhotoModal(${product.id}, 0)">
+                <img src="${product.images[0]}" alt="${product.name}">
             </div>
             <div class="product-info">
                 <h4>${product.name}</h4>
@@ -56,6 +76,10 @@ function renderProducts() {
         </div>
     `).join("");
 }
+
+/* ========================= */
+/*             CART            */
+/* ========================= */
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -120,6 +144,21 @@ function updateCart() {
     saveCart();
 }
 
+function openCart() {
+    cartPanel.classList.add("open");
+    cartOverlay.classList.add("open");
+}
+
+function closeCart() {
+    cartPanel.classList.remove("open");
+    cartOverlay.classList.remove("open");
+    saveCart();
+}
+
+/* ========================= */
+/*      DELIVERY DATES          */
+/* ========================= */
+
 function startOfDay(date) {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
@@ -150,6 +189,29 @@ function populateDeliveryDates() {
         dates.map(d => `<option value="${d.toISOString().slice(0, 10)}">${formatDate(d)}</option>`).join("");
 }
 
+/* ========================= */
+/*          TIME SLOTS          */
+/* ========================= */
+
+timeSlotsEl.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        timeSlotsEl.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedTime = btn.dataset.time;
+        timeSlotsEl.classList.remove("invalid");
+    });
+});
+
+function resetTimeSlots() {
+    selectedTime = "";
+    timeSlotsEl.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+    timeSlotsEl.classList.remove("invalid");
+}
+
+/* ========================= */
+/*         PHONE MASK           */
+/* ========================= */
+
 function formatPhoneInput(e) {
     let value = e.target.value.replace(/\D/g, "");
 
@@ -171,6 +233,10 @@ phoneInput.addEventListener("focus", () => {
     if (!phoneInput.value) phoneInput.value = "+7 ";
 });
 
+/* ========================= */
+/*         VALIDATION           */
+/* ========================= */
+
 function setFieldValidity(el, isValid) {
     el.classList.toggle("invalid", !isValid);
 }
@@ -182,14 +248,18 @@ function validateOrderForm() {
         [nameInput, nameInput.value.trim().length > 0],
         [phoneInput, phoneDigits.length === 11],
         [addressInput, addressInput.value.trim().length > 0],
-        [dateSelect, dateSelect.value !== ""],
-        [timeSelect, timeSelect.value !== ""]
+        [dateSelect, dateSelect.value !== ""]
     ];
 
     checks.forEach(([el, isValid]) => setFieldValidity(el, isValid));
+    setFieldValidity(timeSlotsEl, selectedTime !== "");
 
-    return checks.every(([, isValid]) => isValid);
+    return checks.every(([, isValid]) => isValid) && selectedTime !== "";
 }
+
+/* ========================= */
+/*            TOAST             */
+/* ========================= */
 
 function showToast(message) {
     toastEl.textContent = message;
@@ -200,14 +270,40 @@ function showToast(message) {
     }, 2500);
 }
 
+/* ========================= */
+/*         ORDER MODAL          */
+/* ========================= */
+
+function renderOrderSummary() {
+    const items = Object.values(cart);
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    orderSummaryEl.innerHTML = items.map(item => `
+        <div class="order-summary-row">
+            <span>${item.name} × ${item.quantity}</span>
+            <span>${item.price * item.quantity} ₽</span>
+        </div>
+    `).join("") + `
+        <div class="order-summary-total">
+            <span>Итого</span>
+            <span>${total} ₽</span>
+        </div>
+    `;
+}
+
+function openOrderModal() {
+    renderOrderSummary();
+    orderModal.classList.add("open");
+}
+
 function resetOrderForm() {
     nameInput.value = "";
     phoneInput.value = "";
     addressInput.value = "";
     commentInput.value = "";
     populateDeliveryDates();
-    timeSelect.selectedIndex = 0;
-    [nameInput, phoneInput, addressInput, dateSelect, timeSelect].forEach(el =>
+    resetTimeSlots();
+    [nameInput, phoneInput, addressInput, dateSelect].forEach(el =>
         el.classList.remove("invalid")
     );
 }
@@ -217,28 +313,21 @@ function setSendButtonState(disabled) {
     sendOrderButton.textContent = disabled ? "Отправка..." : "Подтвердить заказ";
 }
 
-cartButton.onclick = () => {
-    cartModal.classList.add("open");
-};
+/* ========================= */
+/*         EVENT WIRING          */
+/* ========================= */
 
-closeCartButton.onclick = () => {
-    cartModal.classList.remove("open");
-    saveCart();
-};
-
-cartModal.onclick = (e) => {
-    if (e.target === cartModal) {
-        cartModal.classList.remove("open");
-    }
-};
+cartButton.onclick = openCart;
+closeCartButton.onclick = closeCart;
+cartOverlay.onclick = closeCart;
 
 checkoutButton.onclick = () => {
     if (Object.keys(cart).length === 0) {
         showToast("Корзина пуста");
         return;
     }
-    cartModal.classList.remove("open");
-    orderModal.classList.add("open");
+    closeCart();
+    openOrderModal();
 };
 
 sendOrderButton.onclick = async () => {
@@ -254,8 +343,7 @@ sendOrderButton.onclick = async () => {
     const address = addressInput.value.trim();
     const comment = commentInput.value.trim();
     const dateLabel = dateSelect.options[dateSelect.selectedIndex].text;
-    const timeLabel = timeSelect.value;
-    const slot = `${dateLabel}, ${timeLabel}`;
+    const slot = `${dateLabel}, ${selectedTime}`;
 
     const items = Object.values(cart);
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -300,7 +388,7 @@ orderModal.onclick = (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         orderModal.classList.remove("open");
-        cartModal.classList.remove("open");
+        closeCart();
     }
 });
 
@@ -310,6 +398,62 @@ document.querySelectorAll("#orderModal input").forEach(input => {
             sendOrderButton.click();
         }
     });
+});
+
+/* ========================= */
+/*             INIT             */
+/* ========================= */
+
+/* ========================= */
+/*        PHOTO LIGHTBOX        */
+/* ========================= */
+
+const photoModal = document.getElementById("photoModal");
+const photoModalImage = document.getElementById("photoModalImage");
+const closePhotoButton = document.getElementById("closePhoto");
+const prevPhotoButton = document.getElementById("prevPhoto");
+const nextPhotoButton = document.getElementById("nextPhoto");
+
+let currentPhotoProductId = null;
+let currentPhotoIndex = 0;
+
+function openPhotoModal(productId, index) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    currentPhotoProductId = productId;
+    currentPhotoIndex = index;
+
+    photoModalImage.src = product.images[currentPhotoIndex];
+    prevPhotoButton.style.display = product.images.length > 1 ? "block" : "none";
+    nextPhotoButton.style.display = product.images.length > 1 ? "block" : "none";
+
+    photoModal.classList.add("open");
+}
+
+function changePhoto(step) {
+    const product = products.find(p => p.id === currentPhotoProductId);
+    if (!product) return;
+
+    currentPhotoIndex = (currentPhotoIndex + step + product.images.length) % product.images.length;
+    photoModalImage.src = product.images[currentPhotoIndex];
+}
+
+closePhotoButton.onclick = () => photoModal.classList.remove("open");
+prevPhotoButton.onclick = () => changePhoto(-1);
+nextPhotoButton.onclick = () => changePhoto(1);
+
+photoModal.onclick = (e) => {
+    if (e.target === photoModal) {
+        photoModal.classList.remove("open");
+    }
+};
+
+document.addEventListener("keydown", (e) => {
+    if (!photoModal.classList.contains("open")) return;
+    if (e.key === "Escape") photoModal.classList.remove("open");
+    if (e.key === "ArrowLeft") changePhoto(-1);
+    if (e.key === "ArrowRight") changePhoto(1);
 });
 
 renderProducts();
