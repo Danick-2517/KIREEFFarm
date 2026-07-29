@@ -42,8 +42,17 @@
 
         <div class="hero-text">
             <h2>Настоящие продукты<br>собственного производства</h2>
-            <p>Небольшие партии. Натуральный состав. Доставка по Бийску.</p>
-           <a href="#catalog" class="hero-button">Смотреть каталог <span>→</span></a>
+            <p>Мы живём здесь. Работаем своими руками. И делаем только то, за что не стыдно.</p>
+            <a href="#catalog" class="hero-button">Смотреть каталог <span>→</span></a>
+        </div>
+    </section>
+
+    <section class="farm-note">
+        <div class="farm-note-inner">
+            <span class="farm-note-label">🌿 Сегодня на ферме</span>
+            <p class="farm-note-text">Утром был туман. Куры уже на выгуле, девчонки собирают зелень к вашим заказам.</p>
+            <span class="farm-note-date" id="todayDate">28 июля, вторник</span>
+            <a href="#" class="farm-note-link">Все записи →</a>
         </div>
     </section>
 
@@ -53,29 +62,27 @@
             <div class="products" id="products"></div>
         </section>
 
-        <section class="info-block" id="about">
-            <h3>О нас</h3>
-            <p>
-                KIREEFF — небольшое семейное хозяйство в Бийске.
-                Мы сами выращиваем и готовим продукцию: без крупных партий,
-                без лишней химии, вручную и в срок.
-            </p>
-        </section>
-
-        <section class="info-block" id="delivery">
-            <h3>Доставка и оплата</h3>
-            <p>
-                Доставка только по Бийску, по выходным, в удобное вам окно.
-                Оплата наличными или переводом курьеру при получении.
-            </p>
-        </section>
-
-        <section class="info-block" id="contacts">
-            <h3>Контакты</h3>
-            <p>
-                Заказ оформляется через сайт — нажмите «Оформить заказ» в корзине.
-                По остальным вопросам пишите в Telegram.
-            </p>
+        <section class="values">
+            <div class="value-block">
+                <h4>Честность</h4>
+                <p>Мы не обещаем невозможного. Мы делаем то, что можем и делаем хорошо.</p>
+            </div>
+            <div class="value-block">
+                <h4>Небольшие партии</h4>
+                <p>Производим немного, но следим за качеством каждого продукта.</p>
+            </div>
+            <div class="value-block">
+                <h4>Свои люди</h4>
+                <p>Мы рядом. Всегда можно спросить, написать, приехать и поговорить.</p>
+            </div>
+            <div class="value-block">
+                <h4>Только по Бийску</h4>
+                <p>Мы не гоняемся за масштабом. Мы здесь, чтобы быть полезными своим.</p>
+            </div>
+            <div class="value-block">
+                <h4>С любовью к делу</h4>
+                <p>Для нас это не просто работа. Это то, чем мы гордимся каждый день.</p>
+            </div>
         </section>
     </main>
 
@@ -104,9 +111,7 @@
             <h3>Корзина</h3>
             <button id="closeCart">✕</button>
         </div>
-
         <div id="cartItems"></div>
-
         <div class="cart-footer">
             <h3>Итого: <span id="cartTotal">0 ₽</span></h3>
             <button id="checkoutButton">Оформить заказ</button>
@@ -116,24 +121,17 @@
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <h2>Оформление заказа</h2>
-
             <div class="order-summary" id="orderSummary"></div>
-
             <input type="text" id="customerName" placeholder="Ваше имя">
             <input type="tel" id="customerPhone" placeholder="+7 (___) ___-__-__">
             <input type="text" id="customerAddress" placeholder="Адрес доставки">
             <textarea id="customerComment" placeholder="Комментарий"></textarea>
-
-            <select id="deliveryDate">
-                <option value="">Выберите дату</option>
-            </select>
-
+            <select id="deliveryDate"></select>
             <div class="time-slots" id="timeSlots">
                 <button type="button" data-time="11:00–15:00">11:00–15:00</button>
                 <button type="button" data-time="15:00–19:00">15:00–19:00</button>
                 <button type="button" data-time="19:00–23:00">19:00–23:00</button>
             </div>
-
             <button id="sendOrder">Подтвердить заказ</button>
         </div>
     </div>

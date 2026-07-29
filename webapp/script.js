@@ -8,7 +8,7 @@ const MONTHS = ["января","февраля","марта","апреля","м�
 const WEEKDAYS = ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
 
 const products = [
-    { id: 1, name: "Колбаса Kireeff", weight: "1 кг", price: 450, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"], badge: "ХИТ" },
+    { id: 1, name: "Колбаса Kireeff", weight: "1 кг", price: 450, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"], badge: "ХИТ"},
     { id: 2, name: "Козье молоко", weight: "1 л", price: 250, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
     { id: 3, name: "Коровье молоко", weight: "1 л", price: 150, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
     { id: 5, name: "Сыр", weight: "500 г", price: 400, images: ["images/products/Колбаса Premium_1.jpg","images/products/Колбаса Premium_2.jpg"] },
@@ -59,22 +59,38 @@ const dateSelect = document.getElementById("deliveryDate");
 /* ========================= */
 
 function renderProducts() {
-    productsContainer.innerHTML = products.map(product => `
-        <div class="product-card">
-            ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ""}
-            <div class="product-image" onclick="openPhotoModal(${product.id}, 0)">
-                <img src="${product.images[0]}" alt="${product.name}">
-            </div>
-            <div class="product-info">
-                <h4>${product.name}</h4>
-                <p>${product.weight}</p>
-                <div class="price-row">
-                    <span class="price">${product.price} ₽</span>
-                    <button onclick="addToCart(${product.id})">+</button>
+    productsContainer.innerHTML = products.map(product => {
+        let statusHTML = '';
+        if (product.status === 'in_stock') {
+            statusHTML = '<span class="status status-in">✅ Свежее, готово к отправке</span>';
+        } else if (product.status === 'low_stock') {
+            statusHTML = '<span class="status status-low">🐔 Девчонки уже почти всё разобрали</span>';
+        } else if (product.status === 'out_of_stock') {
+            statusHTML = '<span class="status status-out">🌿 Сезон закончился. Ждём следующего лета.</span>';
+        } else if (product.status === 'seasonal') {
+            statusHTML = '<span class="status status-seasonal">🌿 Сезонный товар</span>';
+        } else if (product.status === 'coming_soon') {
+            statusHTML = '<span class="status status-coming">🚀 Скоро появится</span>';
+        }
+
+        return `
+            <div class="product-card">
+                ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ""}
+                ${statusHTML}
+                <div class="product-image" onclick="openPhotoModal(${product.id}, 0)">
+                    <img src="${product.images[0]}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h4>${product.name}</h4>
+                    <p class="product-weight">${product.weight}</p>
+                    <div class="price-row">
+                        <span class="price">${product.price} ₽</span>
+                        ${product.status !== 'out_of_stock' ? `<button onclick="addToCart(${product.id})">+</button>` : ''}
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 /* ========================= */
@@ -185,8 +201,28 @@ function getUpcomingWeekendDates() {
 
 function populateDeliveryDates() {
     const dates = getUpcomingWeekendDates();
-    dateSelect.innerHTML = '<option value="">Выберите дату</option>' +
-        dates.map(d => `<option value="${d.toISOString().slice(0, 10)}">${formatDate(d)}</option>`).join("");
+    const select = document.getElementById('deliveryDate');
+    if (!select) {
+        console.error('Элемент deliveryDate не найден!');
+        return;
+    }
+
+    select.innerHTML = '';
+    const emptyOption = document.createElement('option');
+    emptyOption.value = '';
+    emptyOption.textContent = 'Выберите дату';
+    select.appendChild(emptyOption);
+
+    dates.forEach(function(d) {
+        const option = document.createElement('option');
+        option.value = d.toISOString().slice(0, 10);
+        option.textContent = formatDate(d);
+        select.appendChild(option);
+    });
+
+    if (select.options.length > 1) {
+        select.selectedIndex = 1;
+    }
 }
 
 /* ========================= */
@@ -401,10 +437,6 @@ document.querySelectorAll("#orderModal input").forEach(input => {
 });
 
 /* ========================= */
-/*             INIT             */
-/* ========================= */
-
-/* ========================= */
 /*        PHOTO LIGHTBOX        */
 /* ========================= */
 
@@ -456,6 +488,27 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") changePhoto(1);
 });
 
-renderProducts();
-updateCart();
-populateDeliveryDates();
+/* ========================= */
+/*         TODAY DATE           */
+/* ========================= */
+
+function updateTodayDate() {
+    const el = document.getElementById('todayDate');
+    if (!el) return;
+    const now = new Date();
+    const days = ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    el.textContent = `${now.getDate()} ${months[now.getMonth()]}, ${days[now.getDay()]}`;
+}
+
+/* ========================= */
+/*             INIT            */
+/* ========================= */
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderProducts();
+    updateCart();
+    populateDeliveryDates();
+    updateTodayDate();
+    console.log('✅ KIREEFFarm загружен!');
+});
