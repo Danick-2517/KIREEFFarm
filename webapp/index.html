@@ -2,20 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KIREEFF</title>
+
+    <!-- Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=6eb78b0436d8fcd484e15d74b284ddaad90c4238:1785339080&lang=ru_RU" type="text/javascript"></script>
+
+    <button id="cancelOrderBtn" style="display:none; background:#f44336; color:white; border:none; padding:8px 16px; border-radius:8px;">
+    ❌ Отменить заказ
+</button>
+    <button id="editOrderBtn" style="display:none; background:#2E2E2E; color:white; border:none; padding:8px 16px; border-radius:8px; margin-left:8px;">
+    ✎ Редактировать заказ
+</button>
+
 </head>
 <body>
 
-    <section class="hero">
-        <img class="hero-bg" src="images/backgrounds/hero.jpg" alt="KIREEFF">
-        <div class="hero-overlay"></div>
-
-        <div class="hero-nav">
+    <!-- ===== HEADER ===== -->
+    <header class="header sticky">
+        <div class="header-inner">
             <div class="brand">
                 <span class="brand-icon">
                     <img src="images/logo/crest.png" alt="KIREEFF">
@@ -26,86 +43,219 @@
                 </div>
             </div>
 
-            <div class="hero-nav-right">
-                <nav class="nav">
-                    <a href="#catalog">Каталог</a>
-                    <a href="#about">О нас</a>
-                    <a href="#delivery">Доставка и оплата</a>
-                    <a href="#contacts">Контакты</a>
-                </nav>
+            <nav class="nav" id="navMenu">
+                <a href="#catalog">Каталог</a>
+                <a href="#about">О нас</a>
+                <a href="#delivery">Доставка</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
 
+            <div class="header-actions">
                 <button class="header-cart" id="cartButton">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 12H7L6 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M6 7h12l-1 12H7L6 7Z"/>
+                        <path d="M9 7V5a3 3 0 0 1 6 0v2"/>
+                    </svg>
+                    <span class="cart-badge" id="cartCount">0</span>
+                </button>
+                <button class="burger" id="burgerMenu" aria-label="Меню">
+                    <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
+    </header>
 
-        <div class="hero-text">
-            <h2>Настоящие продукты<br>собственного производства</h2>
-            <p>Мы живём здесь. Работаем своими руками. И делаем только то, за что не стыдно.</p>
-            <a href="#catalog" class="hero-button">Смотреть каталог <span>→</span></a>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <img class="hero-bg" src="images/backgrounds/hero.jpg" alt="KIREEFF">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2>Настоящие продукты<br>собственного производства</h2>
+                <p>Мы живём здесь. Работаем своими руками. И делаем только то, за что не стыдно.</p>
+                <a href="#catalog" class="hero-button">Смотреть каталог <span>→</span></a>
+            </div>
         </div>
     </section>
 
+    <!-- ===== FARM NOTE ===== -->
     <section class="farm-note">
         <div class="farm-note-inner">
             <span class="farm-note-label">🌿 Сегодня на ферме</span>
             <p class="farm-note-text">Утром был туман. Куры уже на выгуле, девчонки собирают зелень к вашим заказам.</p>
-            <span class="farm-note-date" id="todayDate">28 июля, вторник</span>
-            <a href="#" class="farm-note-link">Все записи →</a>
+            <div class="farm-note-meta">
+                <span class="farm-note-date" id="todayDate">28 июля, вторник</span>
+                <a href="#" class="farm-note-link">Все записи →</a>
+            </div>
         </div>
     </section>
 
+    <!-- ===== CATALOG ===== -->
     <main>
         <section class="catalog" id="catalog">
             <h3>Каталог продуктов</h3>
-            <div class="products" id="products"></div>
+
+            <div class="catalog-wrapper">
+                <!-- Фильтры -->
+                <aside class="catalog-filters" id="filters">
+                    <button class="filter-btn active" data-category="all">Все</button>
+                    <button class="filter-btn" data-category="meat">Мясо</button>
+                    <button class="filter-btn" data-category="dairy">Молочное</button>
+                    <button class="filter-btn" data-category="eggs">Яйца</button>
+                    <button class="filter-btn" data-category="cheese">Сыры</button>
+                    <button class="filter-btn" data-category="seasonal">Сезонное</button>
+                    <button class="filter-btn" data-category="sets">Наборы</button>
+                </aside>
+
+                <!-- Товары -->
+                <div class="products" id="products"></div>
+            </div>
+
+            <!-- ===== КАРТА ЗАКАЗОВ ===== -->
+<div class="admin-map-section">
+    <h4>📍 Карта заказов</h4>
+    <p class="map-hint">Метки заказов по времени доставки</p>
+    <div id="map" style="width:100%; height:500px; border-radius:12px; background:#EAE6DE;"></div>
+    <div class="map-legend">
+        <span><span class="legend-dot" style="background:#4CAF50;"></span> 11:00–15:00 (собрать первыми)</span>
+        <span><span class="legend-dot" style="background:#FFC107;"></span> 15:00–19:00 (подождут)</span>
+        <span><span class="legend-dot" style="background:#F44336;"></span> 19:00–23:00 (собрать последними)</span>
+    </div>
+</div>
+
         </section>
 
+        <!-- ===== VALUES ===== -->
         <section class="values">
-            <div class="value-block">
-                <h4>Честность</h4>
-                <p>Мы не обещаем невозможного. Мы делаем то, что можем и делаем хорошо.</p>
-            </div>
-            <div class="value-block">
-                <h4>Небольшие партии</h4>
-                <p>Производим немного, но следим за качеством каждого продукта.</p>
-            </div>
-            <div class="value-block">
-                <h4>Свои люди</h4>
-                <p>Мы рядом. Всегда можно спросить, написать, приехать и поговорить.</p>
-            </div>
-            <div class="value-block">
-                <h4>Только по Бийску</h4>
-                <p>Мы не гоняемся за масштабом. Мы здесь, чтобы быть полезными своим.</p>
-            </div>
-            <div class="value-block">
-                <h4>С любовью к делу</h4>
-                <p>Для нас это не просто работа. Это то, чем мы гордимся каждый день.</p>
+            <div class="values-grid">
+                <div class="value-block">
+                    <h4>Честность</h4>
+                    <p>Мы не обещаем невозможного. Мы делаем то, что можем и делаем хорошо.</p>
+                </div>
+                <div class="value-block">
+                    <h4>Небольшие партии</h4>
+                    <p>Производим немного, но следим за качеством каждого продукта.</p>
+                </div>
+                <div class="value-block">
+                    <h4>Свои люди</h4>
+                    <p>Мы рядом. Всегда можно спросить, написать, приехать и поговорить.</p>
+                </div>
+                <div class="value-block">
+                    <h4>Только по Бийску</h4>
+                    <p>Мы не гоняемся за масштабом. Мы здесь, чтобы быть полезными своим.</p>
+                </div>
+                <div class="value-block">
+                    <h4>С любовью к делу</h4>
+                    <p>Для нас это не просто работа. Это то, чем мы гордимся каждый день.</p>
+                </div>
             </div>
         </section>
     </main>
 
+    <!-- ===== ADMIN PANEL ===== -->
+<section class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+        <h2>📦 Управление товарами</h2>
+        <button class="admin-toggle" id="adminToggle">Открыть админку</button>
+    </div>
+
+    <div class="admin-content" id="adminContent" style="display: none;">
+        <!-- Форма добавления -->
+        <div class="admin-form">
+            <h4>Добавить товар</h4>
+            <div class="admin-form-grid">
+                <input type="text" id="adminName" placeholder="Название">
+                <input type="text" id="adminWeight" placeholder="Вес (например: 1 кг)">
+                <input type="number" id="adminPrice" placeholder="Цена">
+                <select id="adminCategory">
+                    <option value="meat">Мясо</option>
+                    <option value="dairy">Молочное</option>
+                    <option value="eggs">Яйца</option>
+                    <option value="cheese">Сыры</option>
+                    <option value="seasonal">Сезонное</option>
+                    <option value="sets">Наборы</option>
+                </select>
+                <select id="adminStatus">
+                    <option value="in_stock">В наличии</option>
+                    <option value="low_stock">Осталось мало</option>
+                    <option value="out_of_stock">Закончилось</option>
+                    <option value="seasonal">Сезонное</option>
+                </select>
+                <input type="text" id="adminBadge" placeholder="Бейдж (ХИТ/НОВИНКА) - опционально">
+                <input type="text" id="adminImage" placeholder="URL фото (например: images/products/photo.jpg)">
+            </div>
+            <button class="btn-primary" id="adminSaveBtn">➕ Добавить товар</button>
+        </div>
+
+        <!-- Список товаров -->
+        <div class="admin-list">
+            <h4>Все товары</h4>
+            <div class="admin-table-wrapper">
+                <table class="admin-table" id="adminTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Цена</th>
+                            <th>Категория</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="footer-inner">
-            <div class="brand">
-                <span class="brand-icon">🌿</span>
-                <div>
-                    <h1>KIREEFF</h1>
-                    <p>Фермерская продукция</p>
+            <div class="footer-brand">
+                <div class="brand">
+                    <span class="brand-icon">🌿</span>
+                    <div>
+                        <h1>KIREEFF</h1>
+                        <p>Фермерская продукция</p>
+                    </div>
                 </div>
+                <p class="footer-desc">Натуральные продукты с любовью к делу</p>
             </div>
+
             <nav class="footer-nav">
-                <a href="#catalog">Каталог</a>
-                <a href="#about">О нас</a>
-                <a href="#delivery">Доставка и оплата</a>
-                <a href="#contacts">Контакты</a>
+                <div>
+                    <h5>Каталог</h5>
+                    <a href="#catalog">Все товары</a>
+                    <a href="#catalog">Сезонное</a>
+                    <a href="#catalog">Наборы</a>
+                </div>
+                <div>
+                    <h5>Информация</h5>
+                    <a href="#about">О нас</a>
+                    <a href="#delivery">Доставка</a>
+                    <a href="#contacts">Контакты</a>
+                </div>
+                <div>
+                    <h5>Контакты</h5>
+                    <a href="tel:+79231234567">+7 (923) 123-45-67</a>
+                    <a href="mailto:hello@kireeff.ru">hello@kireeff.ru</a>
+                    <div class="footer-socials">
+                        <a href="#" aria-label="Telegram">📱</a>
+                        <a href="#" aria-label="WhatsApp">💬</a>
+                        <a href="#" aria-label="VK">📘</a>
+                    </div>
+                </div>
             </nav>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 KIREEFF. Все права защищены.</p>
         </div>
     </footer>
 
+    <!-- ===== CART PANEL ===== -->
     <div class="cart-overlay" id="cartOverlay"></div>
-
     <div class="cart-panel" id="cartPanel">
         <div class="cart-header">
             <h3>Корзина</h3>
@@ -118,6 +268,7 @@
         </div>
     </div>
 
+    <!-- ===== ORDER MODAL ===== -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <h2>Оформление заказа</h2>
@@ -136,6 +287,7 @@
         </div>
     </div>
 
+    <!-- ===== PHOTO MODAL ===== -->
     <div class="modal" id="photoModal">
         <div class="photo-modal-content">
             <button class="photo-close" id="closePhoto">✕</button>
@@ -147,6 +299,21 @@
 
     <div id="toast"></div>
 
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+    </script>
     <script src="script.js"></script>
+
+<script>
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        console.log("✅ Telegram Mini App готов");
+    }
+</script>
 </body>
 </html>

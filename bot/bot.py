@@ -67,7 +67,12 @@ def format_order_message(customer, items, total):
         f"📞 {customer['phone']}\n"
         f"📍 {customer['address']}\n"
         f"🕒 {customer['slot']}\n"
-        f"💬 {customer.get('comment') or '-'}"
+        f"💬 {customer.get('comment') or '-'}\n\n"
+        "─────────────────\n"
+        "📌 ДЕЙСТВИЯ:\n"
+        "✅ Заказ принят (по умолчанию)\n"
+        "🔄 Перенести на следующее окно — /move_{order_id}\n"
+        "❌ Отменить заказ — /cancel_{order_id}"
     )
 
     return text
@@ -99,3 +104,15 @@ def order():
 
 if __name__ == "__main__":
     app.run(port=5000)
+
+@app.route("/move_order/<int:order_id>", methods=["POST"])
+def move_order(order_id):
+    # Логика переноса заказа на следующее окно
+    # Пока просто возвращаем успех
+    return jsonify({"success": True, "message": "Заказ перенесён на следующее окно"})
+
+@app.route("/cancel_order/<int:order_id>", methods=["POST"])
+def cancel_order(order_id):
+    # Логика отмены заказа
+    # Пока просто возвращаем успех
+    return jsonify({"success": True, "message": "Заказ отменён"})
