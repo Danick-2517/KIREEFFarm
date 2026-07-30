@@ -2,7 +2,7 @@
 
 // ===== CONFIG =====
 const CONFIG = {
-    apiUrl: "https://kireeff-bot.onrender.com/order"
+    apiUrl: "https://kireeffarm.onrender.com/order"
 };
 
 const MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
