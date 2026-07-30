@@ -7,6 +7,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import requests
 
+# Загружаем .env
 ENV_PATH = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
@@ -19,17 +20,10 @@ CORS(app)
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
+# Проверка переменных
 if not BOT_TOKEN or not CHAT_ID:
-    if not ENV_PATH.exists():
-        raise RuntimeError(
-            f"Файл .env не найден по пути: {ENV_PATH}\n"
-            f"Создай его: cp .env.example .env (внутри папки bot/)"
-        )
     raise RuntimeError(
-        f"Файл .env найден ({ENV_PATH}), но BOT_TOKEN или CHAT_ID пустые.\n"
-        f"Проверь формат — без кавычек и без пробелов вокруг '=':\n"
-        f"BOT_TOKEN=твой_токен\n"
-        f"CHAT_ID=твой_chat_id"
+        "BOT_TOKEN или CHAT_ID не заданы. Проверь .env файл."
     )
 
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -67,12 +61,7 @@ def format_order_message(customer, items, total):
         f"📞 {customer['phone']}\n"
         f"📍 {customer['address']}\n"
         f"🕒 {customer['slot']}\n"
-        f"💬 {customer.get('comment') or '-'}\n\n"
-        "─────────────────\n"
-        "📌 ДЕЙСТВИЯ:\n"
-        "✅ Заказ принят (по умолчанию)\n"
-        "🔄 Перенести на следующее окно — /move_{order_id}\n"
-        "❌ Отменить заказ — /cancel_{order_id}"
+        f"💬 {customer.get('comment') or '-'}"
     )
 
     return text
@@ -92,8 +81,8 @@ def order():
     if not customer or not items or total is None:
         return jsonify({"success": False, "error": "missing_fields"}), 400
 
-    required_customer_fields = ("name", "phone", "address", "slot")
-    if not all(customer.get(field) for field in required_customer_fields):
+    required = ("name", "phone", "address", "slot")
+    if not all(customer.get(field) for field in required):
         return jsonify({"success": False, "error": "missing_customer_fields"}), 400
 
     text = format_order_message(customer, items, total)
@@ -102,17 +91,16 @@ def order():
     return jsonify({"success": sent})
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
 @app.route("/move_order/<int:order_id>", methods=["POST"])
 def move_order(order_id):
-    # Логика переноса заказа на следующее окно
-    # Пока просто возвращаем успех
-    return jsonify({"success": True, "message": "Заказ перенесён на следующее окно"})
+    return jsonify({"success": True, "message": "Заказ перенесён"}), 200
+
 
 @app.route("/cancel_order/<int:order_id>", methods=["POST"])
 def cancel_order(order_id):
-    # Логика отмены заказа
-    # Пока просто возвращаем успех
-    return jsonify({"success": True, "message": "Заказ отменён"})
+    return jsonify({"success": True, "message": "Заказ отменён"}), 200
+
+
+# ТОЛЬКО ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА (не для Render)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
