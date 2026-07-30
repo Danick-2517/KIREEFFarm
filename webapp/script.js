@@ -2,7 +2,7 @@
 
 // ===== CONFIG =====
 const CONFIG = {
-    apiUrl: "http://127.0.0.1:5000/order"
+    apiUrl: "https://kireeffarm.onrender.com"
 };
 
 const MONTHS = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
