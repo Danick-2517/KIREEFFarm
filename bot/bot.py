@@ -17,6 +17,19 @@ logger = logging.getLogger("kireeff-bot")
 app = Flask(__name__)
 CORS(app)
 
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.get_json()
+    if data and "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        text = data["message"].get("text", "")
+
+        if text == "/start":
+            send_start_message(chat_id)
+
+    return jsonify({"ok": True})
+
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
@@ -27,6 +40,19 @@ if not BOT_TOKEN or not CHAT_ID:
     )
 
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+
+def send_start_message(chat_id):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": "🍅 Добро пожаловать в KIREEFF!\n\nЗдесь можно заказать фермерские продукты с доставкой по Бийску.\n\n🛒 Открыть магазин: t.me/kireeff_farm_bot/Farm",
+        "reply_markup": {
+            "inline_keyboard": [
+                [{"text": "🛒 Открыть магазин", "web_app": {"url": "https://t.me/kireeff_farm_bot/Farm"}}]
+            ]
+        }
+    }
+    requests.post(url, json=payload)
 
 
 def send_telegram_message(text):
@@ -104,3 +130,4 @@ def cancel_order(order_id):
 # ТОЛЬКО ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА (не для Render)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
