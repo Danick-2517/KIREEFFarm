@@ -118,11 +118,11 @@ def send_start_message(chat_id):
             "chat_id": chat_id,
             "text": "🍅 Добро пожаловать в KIREEFF!\n\nНастоящие фермерские продукты с доставкой по Бийску.\n\nНажми на кнопку ниже, чтобы открыть магазин.",
             "reply_markup": {
-                "keyboard": [
-                    [{"text": "🛒 Открыть магазин", "web_app": {"url": "https://t.me/kireeff_farm_bot/Farm"}}]
-                ],
-                "resize_keyboard": True
-            }
+    "keyboard": [
+        [{"text": "🛒 Открыть магазин", "web_app": {"url": "https://t.me/kireeff_farm_bot/Farm"}}]
+    ],
+    "resize_keyboard": True
+}
         }
         requests.post(url, json=payload, timeout=10)
     except Exception as e:
