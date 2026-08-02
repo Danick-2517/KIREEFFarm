@@ -17,42 +17,23 @@ logger = logging.getLogger("kireeff-bot")
 app = Flask(__name__)
 CORS(app)
 
-
-@app.route("/webhook", methods=["POST"])
-def webhook():
-    data = request.get_json()
-    if data and "message" in data:
-        chat_id = data["message"]["chat"]["id"]
-        text = data["message"].get("text", "")
-
-        if text == "/start":
-            send_start_message(chat_id)
-
-    return jsonify({"ok": True})
-
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
-# Проверка переменных
 if not BOT_TOKEN or not CHAT_ID:
+    if not ENV_PATH.exists():
+        raise RuntimeError(
+            f"Файл .env не найден по пути: {ENV_PATH}\n"
+            f"Создай его: cp .env.example .env (внутри папки bot/)"
+        )
     raise RuntimeError(
-        "BOT_TOKEN или CHAT_ID не заданы. Проверь .env файл."
+        f"Файл .env найден ({ENV_PATH}), но BOT_TOKEN или CHAT_ID пустые.\n"
+        f"Проверь формат — без кавычек и без пробелов вокруг '=':\n"
+        f"BOT_TOKEN=твой_токен\n"
+        f"CHAT_ID=твой_chat_id"
     )
 
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-
-def send_start_message(chat_id):
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": "🍅 Добро пожаловать в KIREEFF!\n\nЗдесь можно заказать фермерские продукты с доставкой по Бийску.\n\n🛒 Открыть магазин: t.me/kireeff_farm_bot/Farm",
-        "reply_markup": {
-            "inline_keyboard": [
-                [{"text": "🛒 Открыть магазин", "web_app": {"url": "https://t.me/kireeff_farm_bot/Farm"}}]
-            ]
-        }
-    }
-    requests.post(url, json=payload)
 
 
 def send_telegram_message(text):
@@ -107,8 +88,8 @@ def order():
     if not customer or not items or total is None:
         return jsonify({"success": False, "error": "missing_fields"}), 400
 
-    required = ("name", "phone", "address", "slot")
-    if not all(customer.get(field) for field in required):
+    required_customer_fields = ("name", "phone", "address", "slot")
+    if not all(customer.get(field) for field in required_customer_fields):
         return jsonify({"success": False, "error": "missing_customer_fields"}), 400
 
     text = format_order_message(customer, items, total)
@@ -117,17 +98,46 @@ def order():
     return jsonify({"success": sent})
 
 
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    try:
+        data = request.get_json()
+        if data and "message" in data:
+            chat_id = data["message"]["chat"]["id"]
+            send_start_message(chat_id)
+        return jsonify({"ok": True})
+    except Exception as e:
+        logger.error("Webhook error: %s", e)
+        return jsonify({"ok": False}), 500
+
+
+def send_start_message(chat_id):
+    try:
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": chat_id,
+            "text": "🍅 Добро пожаловать в KIREEFF!\n\nНастоящие фермерские продукты с доставкой по Бийску.\n\nНажми на кнопку ниже, чтобы открыть магазин.",
+            "reply_markup": {
+                "keyboard": [
+                    [{"text": "🛒 Открыть магазин", "web_app": {"url": "https://t.me/kireeff_farm_bot/Farm"}}]
+                ],
+                "resize_keyboard": True
+            }
+        }
+        requests.post(url, json=payload, timeout=10)
+    except Exception as e:
+        logger.error("Send start message failed: %s", e)
+
+
 @app.route("/move_order/<int:order_id>", methods=["POST"])
 def move_order(order_id):
-    return jsonify({"success": True, "message": "Заказ перенесён"}), 200
+    return jsonify({"success": True, "message": f"Заказ #{order_id} перенесён"}), 200
 
 
 @app.route("/cancel_order/<int:order_id>", methods=["POST"])
 def cancel_order(order_id):
-    return jsonify({"success": True, "message": "Заказ отменён"}), 200
+    return jsonify({"success": True, "message": f"Заказ #{order_id} отменён"}), 200
 
 
-# ТОЛЬКО ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА (не для Render)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

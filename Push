@@ -1,5 +1,5 @@
 cd /Users/Danil/Desktop/KIREEFFarm
 git status
 git add .
-git commit -m "0.0.3"
+git commit -m "0.0.4"
 git push origin main
